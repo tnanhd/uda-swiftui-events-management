@@ -8,17 +8,21 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var events: [Event] = []
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        List(events.indices, id: \.self) { index in
+            EventRow(event: events[index])
+                .swipeActions {
+                    Button("Delete"){
+                        events.remove(at: index)
+                    }
+                    .tint(.red)
+                }
         }
-        .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(events: Event.all)
 }
