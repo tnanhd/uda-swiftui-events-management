@@ -23,9 +23,6 @@ struct EventRow: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             Spacer()
-            Image(systemName: "chevron.right")
-                .font(.subheadline)
-                .foregroundColor(.gray)
         }
         
     }

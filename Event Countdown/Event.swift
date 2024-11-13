@@ -14,16 +14,21 @@ struct Event: Comparable, Identifiable {
     }
     
     var id: UUID
-    let title: String
-    let date: Date
-    let textColor: Color
-}
-
-extension Event {
-    static var all: [Event] {
-        [
-            .init(id: UUID(), title: "Event 1", date: .now.addingTimeInterval(-15000), textColor: .red),
-            .init(id: UUID(), title: "Event 2", date: .now.addingTimeInterval(15000), textColor: .blue)
-        ]
+    var title: String
+    var date: Date
+    var textColor: Color
+    
+    init(id: UUID, title: String, date: Date, textColor: Color) {
+        self.id = id
+        self.title = title
+        self.date = date
+        self.textColor = textColor
+    }
+    
+    init() {
+        self.id = UUID()
+        self.title = ""
+        self.date = .now
+        self.textColor = .blue
     }
 }
