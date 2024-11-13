@@ -9,8 +9,10 @@ import SwiftUI
 
 struct EventRow: View {
     let event: Event
-    let formatter = RelativeDateTimeFormatter()
-
+    private let formatter = RelativeDateTimeFormatter()
+    
+    @State private var currentDate: Date = .now
+    @State private var timer: Timer?
     
     var body: some View {
         HStack {
@@ -19,12 +21,31 @@ struct EventRow: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.title3.weight(.bold))
                     .foregroundStyle(event.textColor)
-                Text(formatter.localizedString(for: event.date, relativeTo: .now))
+                Text(timeRemaining)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .onAppear(perform: startTimer)
+                    .onDisappear(perform: stopTimer)
             }
             Spacer()
         }
-        
+    }
+    
+    private var timeRemaining: String {
+        let remainingTime = event.date.timeIntervalSince(currentDate)
+        return remainingTime > 0
+        ? formatter.localizedString(for: event.date, relativeTo: currentDate)
+        : "Event has started"
+    }
+    
+    private func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
+            currentDate = .now
+        }
+    }
+    
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
     }
 }
 

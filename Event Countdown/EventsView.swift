@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct EventsView: View {
     @State var events: [Event] = []
     
     var body: some View {
@@ -17,24 +17,32 @@ struct ContentView: View {
                 NavigationLink {
                     EventForm(event: event) { editedEvent in
                         events[index] = editedEvent
+                        events = events.sorted()
                     }
+                    .navigationTitle("Edit \(event.title)")
+                    .navigationBarTitleDisplayMode(.inline)
                 } label: {
-                    EventRow(event: event).swipeActions {
-                        Button("Delete"){
-                            events.remove(at: index)
+                    EventRow(event: event)
+                        .swipeActions {
+                            Button("Delete"){
+                                events.remove(at: index)
+                            }
+                            .tint(.red)
                         }
-                        .tint(.red)
-                    }
                 }
                 
             }
             .navigationTitle("Events")
+            .navigationBarTitle("Edit event")
             .toolbar {
                 ToolbarItem {
                     NavigationLink {
                         EventForm(event: Event()) { newEvent in
                             events.append(newEvent)
+                            events = events.sorted()
                         }
+                        .navigationTitle("Add Event")
+                        .navigationBarTitleDisplayMode(.inline)
                     } label: {
                         Image(systemName: "plus")
                     }
@@ -57,5 +65,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(events: [])
+    EventsView()
 }

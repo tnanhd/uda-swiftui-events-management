@@ -10,7 +10,7 @@ import SwiftUICore
 
 struct Event: Comparable, Identifiable {
     static func < (lhs: Event, rhs: Event) -> Bool {
-        lhs.title < rhs.title
+        lhs.date < rhs.date
     }
     
     var id: UUID
