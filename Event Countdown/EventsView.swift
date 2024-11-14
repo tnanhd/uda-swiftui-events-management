@@ -12,58 +12,55 @@ struct EventsView: View {
     
     var body: some View {
         NavigationStack {
-            List(events.indices, id: \.self) { index in
-                let event = events[index]
-                NavigationLink {
-                    EventForm(event: event) { editedEvent in
-                        events[index] = editedEvent
-                        events = events.sorted()
+            List {
+                ForEach(events) { event in
+                    NavigationLink(value: event) {
+                        EventRow(event: event)
                     }
-                    .navigationTitle("Edit \(event.title)")
-                    .navigationBarTitleDisplayMode(.inline)
-                } label: {
-                    EventRow(event: event)
-                        .swipeActions {
-                            Button("Delete"){
-                                events.remove(at: index)
-                            }
-                            .tint(.red)
-                        }
                 }
-                
+                .onDelete(perform: delete)
             }
-            .navigationTitle("Events")
-            .navigationBarTitle("Edit event")
             .toolbar {
                 ToolbarItem {
                     NavigationLink {
-                        EventForm(event: Event()) { newEvent in
+                        EventForm(event: Event(), operationMode: .create) { newEvent in
                             events.append(newEvent)
-                            events = events.sorted()
+                            events.sort()
                         }
-                        .navigationTitle("Add Event")
-                        .navigationBarTitleDisplayMode(.inline)
                     } label: {
                         Image(systemName: "plus")
                     }
                 }
             }
-            .overlay(Group {
-                if events.isEmpty {
-                    NavigationLink {
-                        EventForm(event: Event()) { newEvent in
-                            events.append(newEvent)
+            .navigationDestination(for: Event.self) {
+                event in
+                EventForm(event: event, operationMode: .edit) { editEvent in
+                    for (index, event) in events.enumerated() where event.id == editEvent.id {
+                        events[index] = editEvent
+                    }
+                    events.sort()
+                }
+            }
+            .navigationTitle("Events")
+            .overlay(
+                Group {
+                    if (events.isEmpty) {
+                        ContentUnavailableView {
+                            Label("No Event", systemImage: "tray.fill")
+                        } description: {
+                            Text("Events will appear here.")
                         }
-                    } label: {
-                        Text("Click here to add your first event!")
-                            .font(.headline)
                     }
                 }
-            })
+            )
         }
+    }
+    
+    private func delete(at offset: IndexSet) {
+        events.remove(atOffsets: offset)
     }
 }
 
 #Preview {
-    EventsView()
+    EventsView(events: [Event(id: UUID(), title: "Hello world", date: .now, textColor: .red)])
 }
